@@ -7,6 +7,6 @@ This is a basic chat app in which you can chat with different peoples
 - Dart
 
 # Images
-![](images/1.png)
-![](images/3.png)
-![](images/2.png)
+![](images/1.png)  
+![](images/3.png)  
+![](images/2.png)  
