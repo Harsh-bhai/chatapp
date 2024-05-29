@@ -1,45 +1,42 @@
+name: Build & Release
+
 on:
   push:
     branches:
       - master
 
-name: Build & Release
-
 jobs:
   build:
     name: Build and Release new apk
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
           java-version: '17'
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.1'
-      - run: flutter pub get
-      
-      # Update the version (assuming you have a version in pubspec.yaml)
-      - run: flutter pub get version
+          flutter-version: '3.19.1' # Replace with your desired Flutter version
 
-      # You can use any method to increment version here
-      # Below is an example of incrementing version by 1
-      - run: flutter pub bump
-      # Or you can use custom scripts to manipulate version
+      - name: Install dependencies
+        run: flutter pub get
 
-      # Retrieve the updated version
-      - run: echo "Version: $(cat pubspec.yaml | grep version)"
+      - name: Increment version
+        run: flutter pub bump
 
-      # Build APK
-      - run: flutter build apk --release --split-per-abi
+      - name: Build APK
+        run: flutter build apk --release --split-per-abi
 
-      # Push to Releases
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/app/outputs/apk/release/*"
           tag: v$(cat pubspec.yaml | grep version)
-          token: ${{ secrets.TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
