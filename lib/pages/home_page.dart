@@ -40,7 +40,7 @@ return Scaffold(
       ],
     ),
     centerTitle: true,  // This centers the title within the AppBar
-    backgroundColor: Colors.green.shade400,
+    backgroundColor: Colors.green.shade500,
     actions: [
       IconButton(
         onPressed: signOut,
@@ -83,7 +83,7 @@ return Scaffold(
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.person, color: Colors.green.shade400, size: 40),
+              child: Icon(Icons.person, color: Colors.green.shade500, size: 40),
             ),
             Text("@${data["email"].split("@")[0]}"),
           ],

@@ -4,7 +4,6 @@ import 'package:chatapp/services/chat/chat_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ChatPage extends StatefulWidget {
   final String receiverUserEmail;
@@ -22,12 +21,24 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
   final ChatService _chatService = ChatService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final ScrollController _scrollController = ScrollController();
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
       _chatService.sendMessage(widget.receiverUserID, _messageController.text);
       // clear the controller after sending the message
       _messageController.clear();
+      _scrollToBottom();
+    }
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
     }
   }
 
@@ -36,7 +47,7 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("@${widget.receiverUserEmail.split("@")[0]}"),
-        backgroundColor: Colors.green.shade400,
+        backgroundColor: Colors.green.shade500,
       ),
       body: Column(
         children: [
@@ -59,9 +70,17 @@ class _ChatPageState extends State<ChatPage> {
           return Text("Error ${snapshot.error}");
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(color: Colors.green,));
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.green,
+            ),
+          );
         }
+
+        WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+
         return ListView(
+          controller: _scrollController,
           children: snapshot.data!.docs
               .map((document) => _buildMessageItem(document))
               .toList(),
@@ -87,7 +106,6 @@ class _ChatPageState extends State<ChatPage> {
               ? CrossAxisAlignment.end
               : CrossAxisAlignment.start,
           children: [
-            // Text("@${data["senderEmail"].toString().split("@")[0]}"),
             ChatBubble(
                 message: data["message"],
                 color: data["senderId"] == _firebaseAuth.currentUser!.uid
@@ -113,8 +131,6 @@ class _ChatPageState extends State<ChatPage> {
               obscureText: false,
             ),
           ),
-          // const SizedBox(width: 15,),
-          // send button
           IconButton(
             onPressed: sendMessage,
             icon: const Icon(Icons.send),
