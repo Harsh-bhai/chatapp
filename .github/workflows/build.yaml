@@ -32,21 +32,22 @@ jobs:
         run: flutter pub get
 
       - name: Increment version
+        id: increment_version
         run: |
           version=$(yq eval '.version' pubspec.yaml)
           major=$(echo $version | cut -d'.' -f1)
           minor=$(echo $version | cut -d'.' -f2)
           patch=$(echo $version | cut -d'.' -f3)
           new_version="$major.$minor.$((patch+1))"
+          echo "new_version=$new_version" >> $GITHUB_ENV
           sed -i "s/^version:.*$/version: $new_version/" pubspec.yaml
-
 
       - name: Build APK
         run: flutter build apk --release --split-per-abi
 
-      - name: Push to Releases  
+      - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/app/outputs/apk/release/*"
-          tag: v$new_version
+          tag: v${{ env.new_version }}
           token: ${{ secrets.GITHUB_TOKEN }}
