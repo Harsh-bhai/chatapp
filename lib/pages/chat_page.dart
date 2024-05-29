@@ -1,5 +1,6 @@
 import 'package:chatapp/components/chat_bubble.dart';
 import 'package:chatapp/components/my_text_field.dart';
+import 'package:chatapp/pages/more_info.dart';
 import 'package:chatapp/services/chat/chat_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -46,8 +47,13 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("@${widget.receiverUserEmail.split("@")[0]}"),
-        backgroundColor: Colors.green.shade500,
+        title: InkWell(
+          // onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => const MoreInfo(),)),
+          child: Text(
+            "@${widget.receiverUserEmail.split("@")[0]}",
+          ),
+        ),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       ),
       body: Column(
         children: [
@@ -109,8 +115,8 @@ class _ChatPageState extends State<ChatPage> {
             ChatBubble(
                 message: data["message"],
                 color: data["senderId"] == _firebaseAuth.currentUser!.uid
-                    ? Colors.green.shade500
-                    : Colors.grey.shade600),
+                    ? Theme.of(context).primaryColor
+                    : Theme.of(context).primaryColorDark),
           ],
         ),
       ),

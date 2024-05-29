@@ -55,10 +55,10 @@ class _LoginPageState extends State<LoginPage> {
 
                   // welcome back message
                   const SizedBox(height: 40),
-                  const Text(
+                   Text(
                     "Welcome back, you've been missed!",
                     style: TextStyle(
-                        color: Colors.blueGrey,
+                        color: Theme.of(context).primaryColorLight,
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),

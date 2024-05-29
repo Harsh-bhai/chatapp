@@ -1,5 +1,6 @@
 import 'package:chatapp/pages/chat_page.dart';
 import 'package:chatapp/services/auth/auth_service.dart';
+import 'package:chatapp/services/theme/theme_notifier.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -26,31 +27,39 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-return Scaffold(
-  appBar: AppBar(
-    title: const Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(Icons.message),
-        Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Text("Chat App"),
+    ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.message),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text("Chat App"),
+            ),
+          ],
         ),
-      ],
-    ),
-    centerTitle: true,  // This centers the title within the AppBar
-    backgroundColor: Colors.green.shade500,
-    actions: [
-      IconButton(
-        onPressed: signOut,
-        icon: const Icon(Icons.logout),
+        centerTitle: true, // This centers the title within the AppBar
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        actions: [
+          IconButton(
+            icon: Icon(themeProvider.themeMode == ThemeMode.light
+                ? Icons.dark_mode
+                : Icons.light_mode),
+            onPressed: () {
+              themeProvider.toggleTheme();
+            },
+          ),
+          IconButton(
+            onPressed: signOut,
+            icon: const Icon(Icons.logout),
+          ),
+        ],
       ),
-    ],
-  ),
-  body: _buildUserList(),
-);
-
+      body: _buildUserList(),
+    );
   }
 
   // build a list of users except for the current logged in user
@@ -62,7 +71,10 @@ return Scaffold(
           return const Text("Something went wrong");
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(color: Colors.green,));
+          return const Center(
+              child: CircularProgressIndicator(
+            color: Colors.green,
+          ));
         }
         return ListView(
           children:
@@ -101,7 +113,7 @@ return Scaffold(
         },
       );
       // return empty container
-    }else{
+    } else {
       return Container();
     }
   }
