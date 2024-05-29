@@ -59,7 +59,7 @@ class _ChatPageState extends State<ChatPage> {
           return Text("Error ${snapshot.error}");
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text("Loading...");
+          return const Center(child: CircularProgressIndicator(color: Colors.green,));
         }
         return ListView(
           children: snapshot.data!.docs
@@ -102,7 +102,7 @@ class _ChatPageState extends State<ChatPage> {
   // build message input
   Widget _buildMessageInput() {
     return Padding(
-      padding: const EdgeInsets.all(25),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       child: Row(
         children: [
           // text field
@@ -113,7 +113,7 @@ class _ChatPageState extends State<ChatPage> {
               obscureText: false,
             ),
           ),
-
+          // const SizedBox(width: 15,),
           // send button
           IconButton(
             onPressed: sendMessage,

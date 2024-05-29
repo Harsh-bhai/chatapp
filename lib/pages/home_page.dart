@@ -26,28 +26,31 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.message),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("Chat App"),
-            ),
-          ],
+return Scaffold(
+  appBar: AppBar(
+    title: const Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.message),
+        Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text("Chat App"),
         ),
-        backgroundColor: Colors.green.shade400,
-        actions: [
-          IconButton(
-            onPressed: signOut,
-            icon: const Icon(Icons.logout),
-          )
-        ],
+      ],
+    ),
+    centerTitle: true,  // This centers the title within the AppBar
+    backgroundColor: Colors.green.shade400,
+    actions: [
+      IconButton(
+        onPressed: signOut,
+        icon: const Icon(Icons.logout),
       ),
-      body: _buildUserList(),
-    );
+    ],
+  ),
+  body: _buildUserList(),
+);
+
   }
 
   // build a list of users except for the current logged in user
@@ -59,7 +62,7 @@ class _HomePageState extends State<HomePage> {
           return const Text("Something went wrong");
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text("Loading...");
+          return const Center(child: CircularProgressIndicator(color: Colors.green,));
         }
         return ListView(
           children:
