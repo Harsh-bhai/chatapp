@@ -3,7 +3,7 @@ name: Build & Release
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -23,13 +23,19 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.1' # Replace with your desired Flutter version
+          flutter-version: '2.8.1' # Replace with your desired Flutter version
 
       - name: Install dependencies
         run: flutter pub get
 
       - name: Increment version
-        run: flutter pub bump
+        run: |
+          version=$(awk '/^version:/{print $2}' pubspec.yaml)
+          major=$(echo $version | cut -d'.' -f1)
+          minor=$(echo $version | cut -d'.' -f2)
+          patch=$(echo $version | cut -d'.' -f3)
+          new_version="$major.$minor.$((patch+1))"
+          sed -i "s/^version:.*$/version: $new_version/" pubspec.yaml
 
       - name: Build APK
         run: flutter build apk --release --split-per-abi
@@ -38,5 +44,5 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/app/outputs/apk/release/*"
-          tag: v$(cat pubspec.yaml | grep version)
+          tag: v$new_version
           token: ${{ secrets.GITHUB_TOKEN }}
